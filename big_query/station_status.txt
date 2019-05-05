@@ -1,0 +1,23 @@
+select last_updated
+  , TIMESTAMP_MICROS(last_updated*1000000) as last_updated_ts
+  , DATETIME(TIMESTAMP_MICROS(last_updated*1000000), 'America/Los_Angeles') as last_updated_ts_tz # Timezone conversion to PST
+  , extract(date from DATETIME(TIMESTAMP_MICROS(last_updated*1000000), 'America/Los_Angeles')) as last_updated_date
+  , extract(dayofweek from DATETIME(TIMESTAMP_MICROS(last_updated*1000000), 'America/Los_Angeles')) as last_updated_dow
+  , case when extract(dayofweek from DATETIME(TIMESTAMP_MICROS(last_updated*1000000), 'America/Los_Angeles')) in (1, 7) then 0 else 1 end as last_updated_is_weekday
+  , station_id
+  , num_bikes_available
+  , num_bikes_disabled
+  , num_docks_available
+  , num_docks_disabled
+  , is_installed
+  , is_renting
+  , is_returning
+  , last_reported
+  , TIMESTAMP_MICROS(last_reported*1000000) as last_reported_ts
+  , DATETIME(TIMESTAMP_MICROS(last_reported*1000000), 'America/Los_Angeles') as last_reported_ts_tz # Timezone conversion to PST
+from `ieor290-datax-bikeshare.gobike_tripdata.station_status`
+where is_renting = 1
+  and extract(date from TIMESTAMP_MICROS(last_updated*1000000)) between '2019-03-01' and '2019-03-31'
+  and last_updated >= 1551470399 # First timestamp where data looks correct (2019-03-01T11:59:59)
+order by 1, 3
+;
