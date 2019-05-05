@@ -1,12 +1,14 @@
-# datax_bikeshare
+# Project: datax_bikeshare
 
-Bike share optimization project as part of Data-X course @ Berkeley. The project is largely split into three tasks:
+Bike Share Optimization project as part of Data-X course @ Berkeley. We utilize the Ford Bike dataset with other enrichment datasets to build models that help Bike operators to counterbalance the bike flow in an optimal manner.
+
+The project is largely split into three tasks:
 
 1. Clustering model to cluster the stations based on the volume of bike trips between the stations.
 2. Prediction model to predict the net trip count per station.
 3. Optimization model to find the most optimal counter-movement of bikes to keep the station network in balance, based on the predicted state.
 
-# Directory structure
+# Directory Structure
 
 1. **big_query**: All the BigQuery queries to preprocess the datasets for modeling.
      - *hourly_weather.txt* - Query for processing the hourly weather data.
