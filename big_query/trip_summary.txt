@@ -1,0 +1,33 @@
+select extract(date from start_time) as start_date
+  , extract(hour from start_time) as start_hour
+  , case 
+      when extract(hour from start_time) in (0, 1, 2, 3, 4, 5) then 'overnight'
+      when extract(hour from start_time) in (6, 7, 8, 9, 10, 11) then 'morning'
+      when extract(hour from start_time) in (12, 13, 14, 15, 16, 17) then 'afternoon'
+      when extract(hour from start_time) in (18, 19, 20, 21, 22, 23) then 'evening'
+    end as start_period
+  , start_station_id
+  , start_station_name
+  , s_info.capacity as start_station_cap
+  , s_info.has_kiosk as start_station_has_kiosk
+  , end_station_id
+  , end_station_name
+  , e_info.capacity as end_station_cap
+  , e_info.has_kiosk as end_station_has_kiosk
+  , start_station_latitude
+  , start_station_longitude
+  , end_station_latitude
+  , end_station_longitude
+  , sum(duration_sec) as sum_duration_sec
+  , 1.0 * sum(duration_sec) / 60 as sum_duration_min
+  , count(*) as trip_count
+  , sum(case when user_type = 'Subscriber' then 1 else 0 end) as subscriber_trip_count # trip count by monthly or yearly subscribers
+  , sum(case when user_type = 'Customer' then 1 else 0 end) as customer_trip_count # trip count by adhoc customers
+from (select * from `ieor290-datax-bikeshare.gobike_tripdata.tripdata` union all select * from `ieor290-datax-bikeshare.gobike_tripdata.tripdata_032019`) trips
+  join `ieor290-datax-bikeshare.gobike_tripdata.station_info` s_info on trips.start_station_id = s_info.station_id and s_info.short_name like 'SF%'
+  join `ieor290-datax-bikeshare.gobike_tripdata.station_info` e_info on trips.end_station_id = e_info.station_id and e_info.short_name like 'SF%'
+where extract(date from start_time) >= '2018-08-01'
+  and (start_station_id != 'NULL' or end_station_id != 'NULL')
+group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+order by 1, 2, 3, 4, 8
+;

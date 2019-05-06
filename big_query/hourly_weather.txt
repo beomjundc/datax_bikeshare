@@ -1,0 +1,27 @@
+select extract(date from datetime_mod) as start_date
+  , extract(hour from datetime_mod) as start_hour
+  , timestamp_trunc(datetime_mod, hour) as datetime_hour
+  , weather_mod.*
+from (select timestamp_add(timestamp(format_timestamp('%Y-%m-%d %H:%M:%S %Z', parse_timestamp('%Y-%m-%d %I:%M %p', concat(cast(Date as string),' ', cast(Time as string))))), interval 5 minute) as datetime_mod
+        , temperature
+        , wind
+        , precip_
+     from (
+       select start_date as Date, Time, temperature, wind, precipi_ as precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2018AugHourlyWeather`
+       union all
+       select start_date as Date, Time, temperature, wind, precipi_ as precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2018Sep_hourlyWeather`
+       union all
+       select start_date as Date, Time, temperature, wind, precipi_ as precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2018Oct_hourlyWeather`
+       union all
+       select start_date as Date, Time, temperature, wind, precipi_ as precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2018Nov_hourlyWeather`
+       union all
+       select start_date as Date, Time, temperature, wind, precipi_ as precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2018Dec_hourlyWeather`
+       union all
+       select Date, Time, temperature, wind, precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2019_Jan_Hourly_Weather`
+       union all
+       select Date, Time, temperature, wind, precip_ from `ieor290-datax-bikeshare.gobike_tripdata.2019_Feb_Hourly_Weather`
+       union all
+       select Date, Time, temperature, wind, precipi_ as precip from `ieor290-datax-bikeshare.gobike_tripdata.2019_Mar_Hourly_Weather`)
+     ) weather_mod
+order by 1, 2, 3
+;
