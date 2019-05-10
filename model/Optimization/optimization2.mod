@@ -14,8 +14,8 @@ subject to source_goal{i in source}:  sum{j in sink} -x[i,j] + sourceflow[i] <= 
 subject to source_limit{i in source}: sum{j in sink} -x[i,j] + sourceflow[i] >= -3;
 subject to sink_goal{j in sink}:      sum{i in source}  x[i,j] + sinkflow[j] >= -3;
 subject to sink_limit{j in sink}:     sum{i in source}  x[i,j] + sinkflow[j] <=  3;
-#subject to station_status_hi{i in source}: capacity[i] - status[i] - sum{j in sink} x[i,j] 
-#subject to station_status_lo{i in source}:
+#subject to source_status{i in source}: status[i] - sum{j in sink} x[i,j] + sourceflow[i] <= capacity[i]; 
+#subject to sink_status{j in sink}: status[j] + sum{i in source} x[i,j] + sinkflow[j] >= 0;
 
 data;
 
